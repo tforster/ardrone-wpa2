@@ -1,66 +1,46 @@
----
-```
-       __     __  __  __      __
-   /\ |__)   |  \|__)/  \|\ ||_ 
-  /--\| \ .  |__/| \ \__/| \||__
-  
-              WPA/WPA2 support
-```
----
+# AR Drone WPA2 Support
+Forked from Diego Araos [ardrone-wpa2](https://github.com/daraosn/ardrone-wpa2) github project
 
-A major security flaw of the Parrot(c) AR.Drone is that you can easily hack them as they use an open network infrastructure.
-One could prank on someone else's flying drone and crash it by simply doing:
+Diego's scripts do not work on Windows machines because telnet is not available. Telnet can be added using Windows add/remove programs but security features do not allow it to be run with the scripts even from a Bash prompt. I found it easier to take the final output of his scripts and create a net-new bash file that is uploaded to the drone.
 
-```{ echo "reboot"; sleep 1 } | telnet 192.168.1.1```
+# How to Install
+Edit the connect.sh script locally
 
-And even when it's possible to pair a device with the drone, there are ways to fake the MAC Address and still get access to a drone.
+    ifconfig ath0 {new drone ip}; iwconfig ath0 essid "{ssid}" && wpa_supplicant -B -Dwext -iath0 -c/etc/wpa_supplicant.conf
+    // replace {new drone ip} with your preferred static IP
+    // replace {ssid} with the SSID of your Wifi network
 
-Wi-Fi Protected Access solves this issue.
+Connect your laptop to your drone and copy all required files to the drone including the edited connect script. If your drone's IP is not 192.168.1.1 then edit the curl lines accordingly. After copying the files move them from the default FTP directory of /data/video to their final location and make them executable.
 
-It's possible to cross-compile wpa_supplicant into ARM architecture by following a similar method as described in the great repo from @felixge [node-cross-compiler](http://github.com/felixge/node-cross-compiler).
+    curl -T bin/wpa_cli "ftp://192.168.1.1"
+    curl -T bin/wpa_passphrase "ftp://192.168.1.1"
+    curl -T bin/wpa_supplicant "ftp://192.168.1.1"
+    curl -T bin/connect.sh "ftp://192.168.1.1"
+    mv /data/video/wpa_* /bin
+    mv /data/video/connect.sh /bin
+    chmod +x /bin/wpa_*
+    chmod +x /bin/connect.sh
 
-I'll add instructions soon on how to compile it, but it can be basically achieved using vagrant to compile the source code of wpa_supplicant, which will take care of the WPA2 authentication.
+Create a new wpa_supplicant.conf file
 
-How to Use
-==========
----
 
-1. Connect your laptop to your drone.
-2. Install with: ```script/install```
-3. Connect to a network with: ```script/connect "<essid>" -p "<password>" -a <address> -d <droneip>```
+    wpa_passphrase {ssid} {password} > /etc/wpa_supplicant.conf
+    // Replace {ssid} and {password} with your Wifi credentials
 
-Run ```script/connect -h``` to get help.
+# How to Connect
+Connect your laptop to your drone. By default it exposes itself as a WAP listening on 192.168.1.1. If for some reason your drone does not use this address change the following line accordingly.
 
-Do Cool Stuff
-=============
----
+    telnet 192.168.1.1
+    connect.sh
+    // connect.sh is in /bin and should be in your path
 
-**Connect your drone to the Internet**
+Your existing laptop connection will now be broken. Connect your laptop to the same Wifi network as the drone and try to ping or telnet to the static address you set in connect.sh.
 
-1. Use connect script to join your WIFI network.
-2. ```telnet <your_new_drone_ip>```
-3. ```route add default gw <your_router_ip> ath0```
-4. ```wget -O - http://74.125.224.72/```
-
-TODO
-====
----
-
-- Improve scripts (i.e. parse params with getopts).
-- Add support to create a WPA2 network with the drone.
-- ~~Add DHCP client support.~~
-- Code internal scripts / deamons to handle authentication inside the drone.
-- Not so related, but would be cool to add hostname resolution.
-
-Collaboration
-=============
----
+# Collaboration
 
 Feel free to fork and collaborate :)
 
-License
-=======
----
+# License
 
 ardrone-wpa2 @daraosn, MIT (see LICENSE)
 

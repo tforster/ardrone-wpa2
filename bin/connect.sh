@@ -1,0 +1,2 @@
+﻿# Resets the network stack so that the Drone is no longer an open AP but instead logs into our temporary DAN-DRONE wifi network setup on the 6th Floor
+ifconfig ath0 192.168.1.10; iwconfig ath0 essid "DAN-DRONE" && wpa_supplicant -B -Dwext -iath0 -c/etc/wpa_supplicant.conf
