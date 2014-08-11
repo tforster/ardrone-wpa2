@@ -15,11 +15,11 @@ Connect your laptop to your drone and copy all required files to the drone inclu
     curl -T bin/wpa_cli "ftp://192.168.1.1"
     curl -T bin/wpa_passphrase "ftp://192.168.1.1"
     curl -T bin/wpa_supplicant "ftp://192.168.1.1"
-    curl -T bin/connect.sh "ftp://192.168.1.1"
+    curl -T bin/boot2drone.sh "ftp://192.168.1.1"
     mv /data/video/wpa_* /bin
-    mv /data/video/connect.sh /bin
+    mv /data/video/boot2drone.sh /bin
     chmod +x /bin/wpa_*
-    chmod +x /bin/connect.sh
+    chmod +x /bin/boot2drone.sh
 
 Create a new wpa_supplicant.conf file
 
@@ -42,7 +42,7 @@ Feel free to fork and collaborate :)
 
 # License
 
-ardrone-wpa2 @daraosn, MIT (see LICENSE)
+ardrone-wpa2 @tforster, MIT (see LICENSE)
 
 wpa_supplicant (BSD licensed)
 Copyright (c) 2003-2013, Jouni Malinen <j@w1.fi> and contributors.
